@@ -1,0 +1,71 @@
+server:
+  port: 8090
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      auto-commit: false
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: update
+  cloud:
+    stream:
+      bindings:
+        userCreatedEvents:
+          destination: auth.user.events.created
+          group: ${spring.application.name}
+        userUpdatedEvents:
+          destination: auth.user.events.updated
+          group: ${spring.application.name}
+        userDeletedEvents:
+          destination: auth.user.events.deleted
+          group: ${spring.application.name}
+
+        clientCreatedEvents:
+          destination: auth.client.events.created
+          group: ${spring.application.name}
+        clientUpdatedEvents:
+          destination: auth.client.events.updated
+          group: ${spring.application.name}
+        clientDeletedEvents:
+          destination: auth.client.events.deleted
+          group: ${spring.application.name}
+
+        authorityCreatedEvents:
+          destination: auth.authority.events.created
+          group: ${spring.application.name}
+        authorityUpdatedEvents:
+          destination: auth.authority.events.updated
+          group: ${spring.application.name}
+        authorityDeletedEvents:
+          destination: auth.authority.events.deleted
+          group: ${spring.application.name}
+
+authorities:
+  authority-infos:
+    - name: ROLE_ADMIN
+    - name: ROLE_USER
+
+clients:
+  client-infos:
+    - id: client
+      password: Passw0rd1
+      scope: "/auth:get,/auth:create,/auth:update"
+      grant-types: "password,refresh_token,client_credentials"
+      access-token-validity-seconds: 86400
+      refresh-token-validity-seconds: 86400
+
+users:
+  user-infos:
+    - username: admin
+      password: Passw0rd1
+      authorities: ROLE_ADMIN
+
+messages:
+  base-names: classpath:messages/default_validation_messages, classpath:messages/validation_messages
